@@ -1,4 +1,4 @@
-# 🛒 BASKET-SHOP Backend
+# 🛒🏀 BASKET-SHOP Backend
 
 - Repositorio del backend de MiTienda, una aplicación web de ventas desarrollada como prueba técnica
 - Esta solución está construida con Python, FastAPI, SQLAlchemy, MySQL y una arquitectura de microservicios.
