@@ -4,14 +4,14 @@
 - Esta solución está construida con Python, FastAPI, SQLAlchemy, MySQL y una arquitectura de microservicios.
 
 
-## FUNCIONALIDAD
+## 🔧 FUNCIONALIDAD
 
 - Manejo de sesiones
 - CRUD para los productos
 - CRUD para las categorias
 
 
-## CASO DE USO: Crear Producto
+## 📄 CASO DE USO: Crear Producto
 
 **ID:** CU-007  
 **Nombre del caso de uso:** Crear Producto  
