@@ -20,10 +20,12 @@
 El administrador agrega un nuevo producto al sistema a través del frontend. El backend valida la información y lo registra en la base de datos bajo la categoría correspondiente.
 
 
-**Flujo principal:**
-1. El administrador completa un formulario en el frontend con los datos del producto.
-2. El frontend envía una solicitud **POST** al endpoint `/crear_producto`.
-3. El backend valida que todos los campos requeridos estén presentes.
-4. Se inserta un nuevo registro en la tabla `Productos`.
-5. Se devuelve un mensaje de confirmación al administrador.
+### Flujo Principal
 
+| Paso | Actor       | Acción |
+|------|------------|--------|
+| 1    | Administrador | Completa un formulario en el frontend con los datos del producto |
+| 2    | Administrador | Envía una solicitud **POST** al endpoint `/crear_producto` |
+| 3    | Sistema       | Valida que todos los campos requeridos estén presentes |
+| 4    | Sistema       | Inserta un nuevo registro en la tabla `Productos` |
+| 5    | Sistema       | Devuelve un mensaje de confirmación al administrador |
