@@ -110,6 +110,20 @@ async def crear_producto(data: dict):
     return {"message": "Producto creado exitosamente"}
 
 
+
+#ruta para eliminar un producto
+@app.post("/eliminar_producto")
+async def eliminar_producto(data: dict):
+    query = productos.select().where(productos.c.id == data["id"])
+    productoEliminar = await database.fetch_one(query)
+    if productoEliminar:
+        query = productos.delete().where(productos.c.id == data["id"])
+        await database.execute(query)
+        return {"message": "Producto eliminado exitosamente"}
+    else:
+        return {"message": "Producto no encontrado"}
+
+
 #ruta get para obtener todos los usuarios
 @app.get("/usuarios")
 async def get_usuarios():
