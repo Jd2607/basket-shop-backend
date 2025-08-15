@@ -1,4 +1,3 @@
-# app/routers/categorias.py
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
 from app.modelos.categorias import categorias

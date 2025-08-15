@@ -1,6 +1,7 @@
-# app/routers/productos.py
+from typing import List
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 from app.modelos.producto import productos
 from app.database import database
 
@@ -11,6 +12,25 @@ router = APIRouter(prefix="/productos", tags=["Productos"])
 @router.get("/")
 async def get_productos():
     query = productos.select()
+    return await database.fetch_all(query)
+
+
+#ruta para obtener un producto
+@router.post("/obtener")
+async def get_producto(data: dict):
+    query = productos.select().where(productos.c.id == data["id"])
+    return await database.fetch_one(query)
+
+
+
+
+class IdsRequest(BaseModel):
+    ids: List[int]
+
+@router.post("/obtener-por-ids")
+async def obtener_productos_por_ids(request: IdsRequest):
+    print(request.ids)
+    query = productos.select().where(productos.c.id.in_(request.ids))
     return await database.fetch_all(query)
 
 

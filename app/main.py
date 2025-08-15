@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 from app.database import database
-from app.rutas import rutas_productos, rutas_categorias
+from app.rutas import rutas_productos, rutas_categorias, rutas_pedidos, rutas_pedido_productos
 from app.autenticacion import login
 
 
@@ -12,6 +12,8 @@ app = FastAPI()
 # Registrar routers
 app.include_router(rutas_productos.router)
 app.include_router(rutas_categorias.router)
+app.include_router(rutas_pedidos.router)
+app.include_router(rutas_pedido_productos.router)
 
 
 # Ruta de login
