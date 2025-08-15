@@ -4,7 +4,6 @@ from app.modelos.producto import productos
 from app.modelos.usuario import usuarios
 from app.modelos.categorias import categorias
 from fastapi.middleware.cors import CORSMiddleware
-from app.modelos.categoriaModel import CategoriaModelo
 from fastapi import HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from passlib.context import CryptContext

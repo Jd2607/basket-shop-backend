@@ -12,7 +12,7 @@ def test_get_productos():
         #verifica que la lista no esté vacía
         assert len(response.json()) > 0
 
-""""
+
 def test_crear_producto():
     with TestClient(app) as client:
         # Intentamos crear un nuevo producto
@@ -20,7 +20,7 @@ def test_crear_producto():
         response = client.post("/productos/crear_producto", json=producto)
         assert response.status_code == 200
         assert response.json().get("message") == "Producto creado exitosamente"
-"""
+
 
 def test_eliminar_producto_inexistente():
     with TestClient(app) as client:
@@ -29,14 +29,14 @@ def test_eliminar_producto_inexistente():
         assert response.status_code == 404
         assert response.json().get("message") == "Producto no encontrado"
 
-"""
+
 def test_eliminar_producto_existente():
     with TestClient(app) as client:
         # Intentamos eliminar un producto que existe
         response = client.post("/productos/eliminar_producto", json={"id": 1})
         assert response.status_code == 200
         assert response.json().get("message") == "Producto eliminado exitosamente"
-"""
+
 
 def test_asignar_categoria_producto_inexistente():
     with TestClient(app) as client:
@@ -49,6 +49,6 @@ def test_asignar_categoria_producto_inexistente():
 def test_asignar_categoria_existente():
     with TestClient(app) as client:
         # Intentamos asignar una categoría a un producto que existe
-        response = client.post("/productos/asignar_categoria", json={"producto_id": 2, "categoria_id": 25})
+        response = client.post("/productos/asignar_categoria", json={"producto_id": 2, "categoria_id": 102}) #colocar id para prueba
         assert response.status_code == 200
         assert response.json().get("message") == "Categoría asignada al producto exitosamente"
