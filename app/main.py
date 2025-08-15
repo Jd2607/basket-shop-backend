@@ -1,22 +1,22 @@
 from fastapi import FastAPI
-from app.database import database, metadata, engine
+from fastapi.responses import JSONResponse
 from app.modelos.producto import productos
 from app.modelos.usuario import usuarios
 from app.modelos.categorias import categorias
 from fastapi.middleware.cors import CORSMiddleware
 from app.modelos.categoriaModel import CategoriaModelo
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from passlib.context import CryptContext
 from jose import jwt, JWTError
 from datetime import datetime, timedelta
 from typing import Optional
 
-
+from app.database import database  # Solo usamos el objeto database
 
 app = FastAPI()
 
-# Configuración de CORS
+# Configuración de CORS 
 SECRET_KEY = "mi_clave_secreta"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
@@ -62,19 +62,15 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     token = create_access_token({"usuario": user["usuario"]})
     return {"access_token": token, "token_type": "bearer"}
 
-
-
-
+# Configuración de CORS para peticiones 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Cambia * por tu dominio en producción
+    allow_origins=["*"],       # dominios permitidos
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["*"],         # GET, POST, PUT, DELETE, etc.
+    allow_headers=["*"],         # cabeceras permitidas
 )
 
-
-# Configuración de la base de datos
 @app.on_event("startup")
 async def startup():
     await database.connect()
@@ -84,34 +80,28 @@ async def shutdown():
     await database.disconnect()
 
 
-
-#ruta de prueba
+# Ruta de prueba
 @app.get("/")
 async def read_root():
     return {"message": "Hola FastAPI con MySQL"}
 
-
-
-
-#ruta get para obtener todos los productos registrados
+# Ruta get para obtener todos los productos registrados
 @app.get("/productos")
 async def get_productos():
     query = productos.select()
-    #se usa fetch ya que esperamos un valor de vuelta
     return await database.fetch_all(query)
-    
 
-
-#ruta para crear un producto
+# Ruta para crear un producto
 @app.post("/crear_producto")
 async def crear_producto(data: dict):
     query = productos.insert().values(**data)
     await database.execute(query)
-    return {"message": "Producto creado exitosamente"}
+    return JSONResponse(
+        status_code=200,
+        content={"message": "Producto creado exitosamente"}
+    )
 
-
-
-#ruta para eliminar un producto
+# Ruta para eliminar un producto
 @app.post("/eliminar_producto")
 async def eliminar_producto(data: dict):
     query = productos.select().where(productos.c.id == data["id"])
@@ -119,69 +109,75 @@ async def eliminar_producto(data: dict):
     if productoEliminar:
         query = productos.delete().where(productos.c.id == data["id"])
         await database.execute(query)
-        return {"message": "Producto eliminado exitosamente"}
+        return JSONResponse(
+            status_code=200,
+            content={"message": "Producto eliminado exitosamente"}
+        )
     else:
-        return {"message": "Producto no encontrado"}
+        return JSONResponse(
+            status_code=404,
+            content={"message": "Producto no encontrado"}
+        )
 
-
-#ruta get para obtener todos los usuarios
+# Ruta get para obtener todos los usuarios
 @app.get("/usuarios")
 async def get_usuarios():
     query = usuarios.select()
     return await database.fetch_all(query)
 
-
-
-#ruta para obtener las categorias
+# Ruta para obtener las categorias
 @app.get("/categorias")
 async def get_categorias():
     query = categorias.select()
     return await database.fetch_all(query)
 
-
-
-#ruta para crear una categoria
+# Ruta para crear una categoria
 @app.post("/crear_categoria")
-#de parametro recibimos un diccionario
 async def crear_categoria(categoria: dict):
-    # ** sirve para desestructurar el diccionario como se hace con JSON
     query = categorias.insert().values(**categoria)
-    #usamos execute ya que no esperamos un valor de vuelta
     await database.execute(query)
-    return {"message": "Categoría creada exitosamente"}
+    return JSONResponse(
+        status_code=200,
+        content={"message": "Categoría creada exitosamente"}
+    )
 
-
-
-#ruta para cambiar el nombre de una categoria
+# Ruta para cambiar el nombre de una categoria
 @app.post("/editar_categoria")
-#usamos el modelo creado el cual se llenara con la informacion que recibimos
 async def cambiar_nombre_categoria(data: dict):
-    #categorias.c hace referencia a las columnas de la tabla
     query = categorias.select().where(categorias.c.id == data["categoria_id"])
     categoriaEditar = await database.fetch_one(query)
     if categoriaEditar:
         query = categorias.update().where(categorias.c.id == data["categoria_id"]).values(nombre=data["nuevo_nombre"])
         await database.execute(query)
-        return {"message": "Nombre de categoría actualizado exitosamente"}
+        return JSONResponse(
+            status_code=200,
+            content={"message": "Nombre de categoría actualizado exitosamente"}
+        )
     else:
-        return {"message": "Categoría no encontrada"}
-    
+        return JSONResponse(
+            status_code=404,
+            content={"message": "Categoría no encontrada"}
+        )
 
-
-#ruta para asignar/cambiar categoria a un producto
+# Ruta para asignar/cambiar categoria a un producto
 @app.post("/asignar_categoria")
 async def asignar_categoria(data: dict):
     query = productos.select().where(productos.c.id == data["producto_id"])
-    productoAsignar = database.fetch_one(query)
+    productoAsignar = await database.fetch_one(query)
     if productoAsignar:
         query = productos.update().where(productos.c.id == data["producto_id"]).values(categoria_id=data["categoria_id"])
         await database.execute(query)
-        return {"message": "Categoría asignada al producto exitosamente"}
+        return JSONResponse(
+            status_code=200,
+            content={"message": "Categoría asignada al producto exitosamente"}
+        )
+    else:
+        return JSONResponse(
+            status_code=404,
+            content={"message": "Producto no encontrado"}
+        )
 
-
-
-
-#ruta para eliminar una categoria
+# Ruta para eliminar una categoria
 @app.post("/eliminar_categoria")
 async def eliminar_categoria(categoria: dict):
     query = categorias.select().where(categorias.c.id == categoria["id"])
@@ -189,15 +185,17 @@ async def eliminar_categoria(categoria: dict):
     if categoriaEliminar:
         query = categorias.delete().where(categorias.c.id == categoria["id"])
         await database.execute(query)
-        return {"message": "Categoría eliminada exitosamente"}
+        return JSONResponse(
+            status_code=200,
+            content={"message": "Categoría eliminada exitosamente"}
+        )
     else:
-        return {"message": "Categoría no encontrada"}
+        return JSONResponse(
+            status_code=404,
+            content={"message": "Categoría no encontrada"}
+        )
 
-
-
-
-
-##probamos la conexion a la base de datos
+# Probar la conexión a la base de datos
 @app.get("/test-db")
 async def test_db():
     query = "SELECT VERSION()"
