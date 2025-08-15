@@ -20,7 +20,7 @@
 El administrador agrega un nuevo producto al sistema a través del frontend. El backend valida la información y lo registra en la base de datos bajo la categoría correspondiente.
 
 
-### Flujo Principal
+## Flujo Principal
 
 | Paso | Actor       | Acción |
 |------|------------|--------|
@@ -29,3 +29,10 @@ El administrador agrega un nuevo producto al sistema a través del frontend. El 
 | 3    | Sistema       | Valida que todos los campos requeridos estén presentes |
 | 4    | Sistema       | Inserta un nuevo registro en la tabla `Productos` |
 | 5    | Sistema       | Devuelve un mensaje de confirmación al administrador |
+
+
+## Ejecucion de pruebas unitarias
+
+- Activamos el entorno: .\venv\Scripts\actívate
+- En caso de tener problemas al encontrar el modulo app: $env:PYTHONPATH=" -- ruta --\backend"
+- Ejecucion: pytest -v (-v para ver detalles de la ejecucion)
