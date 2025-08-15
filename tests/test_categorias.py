@@ -2,8 +2,6 @@ import pytest
 from fastapi.testclient import TestClient
 from app.main import app
 
-# Test para obtener todas las categorías
-
 def test_get_categorias():
     with TestClient(app) as client:
         response = client.get("/categorias")

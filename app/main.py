@@ -92,7 +92,7 @@ async def get_productos():
     return await database.fetch_all(query)
 
 # Ruta para crear un producto
-@app.post("/crear_producto")
+@app.post("/productos/crear_producto")
 async def crear_producto(data: dict):
     query = productos.insert().values(**data)
     await database.execute(query)
@@ -101,8 +101,26 @@ async def crear_producto(data: dict):
         content={"message": "Producto creado exitosamente"}
     )
 
+# Ruta para asignar/cambiar categoria a un producto
+@app.post("/productos/asignar_categoria")
+async def asignar_categoria(data: dict):
+    query = productos.select().where(productos.c.id == data["producto_id"])
+    productoAsignar = await database.fetch_one(query)
+    if productoAsignar:
+        query = productos.update().where(productos.c.id == data["producto_id"]).values(categoria_id=data["categoria_id"])
+        await database.execute(query)
+        return JSONResponse(
+            status_code=200,
+            content={"message": "Categoría asignada al producto exitosamente"}
+        )
+    else:
+        return JSONResponse(
+            status_code=404,
+            content={"message": "Producto no encontrado"}
+        )
+
 # Ruta para eliminar un producto
-@app.post("/eliminar_producto")
+@app.post("/productos/eliminar_producto")
 async def eliminar_producto(data: dict):
     query = productos.select().where(productos.c.id == data["id"])
     productoEliminar = await database.fetch_one(query)
@@ -132,7 +150,7 @@ async def get_categorias():
     return await database.fetch_all(query)
 
 # Ruta para crear una categoria
-@app.post("/crear_categoria")
+@app.post("/categorias/crear_categoria")
 async def crear_categoria(categoria: dict):
     query = categorias.insert().values(**categoria)
     await database.execute(query)
@@ -142,7 +160,7 @@ async def crear_categoria(categoria: dict):
     )
 
 # Ruta para cambiar el nombre de una categoria
-@app.post("/editar_categoria")
+@app.post("/categorias/editar_categoria")
 async def cambiar_nombre_categoria(data: dict):
     query = categorias.select().where(categorias.c.id == data["categoria_id"])
     categoriaEditar = await database.fetch_one(query)
@@ -159,26 +177,8 @@ async def cambiar_nombre_categoria(data: dict):
             content={"message": "Categoría no encontrada"}
         )
 
-# Ruta para asignar/cambiar categoria a un producto
-@app.post("/asignar_categoria")
-async def asignar_categoria(data: dict):
-    query = productos.select().where(productos.c.id == data["producto_id"])
-    productoAsignar = await database.fetch_one(query)
-    if productoAsignar:
-        query = productos.update().where(productos.c.id == data["producto_id"]).values(categoria_id=data["categoria_id"])
-        await database.execute(query)
-        return JSONResponse(
-            status_code=200,
-            content={"message": "Categoría asignada al producto exitosamente"}
-        )
-    else:
-        return JSONResponse(
-            status_code=404,
-            content={"message": "Producto no encontrado"}
-        )
-
 # Ruta para eliminar una categoria
-@app.post("/eliminar_categoria")
+@app.post("/categorias/eliminar_categoria")
 async def eliminar_categoria(categoria: dict):
     query = categorias.select().where(categorias.c.id == categoria["id"])
     categoriaEliminar = await database.fetch_one(query)
