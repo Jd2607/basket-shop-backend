@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 from databases import Database
 
 # Cambia estos valores por los de tu entorno
-DATABASE_URL = "mysql+mysqlconnector://root:Juan@2607@localhost:3306/pruebas_tecnica_temporal"
+DATABASE_URL = "mysql+mysqlconnector://root:Juan@2607@localhost:3306/prueba_tecnica"
 
 database = Database(DATABASE_URL)
 metadata = MetaData()
